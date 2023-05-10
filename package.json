@@ -1,0 +1,16 @@
+{
+  "name": "vufind-regression-testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha scripts/test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.3.7",
+    "chromedriver": "^113.0.0",
+    "selenium-webdriver": "^4.9.1"
+  }
+}

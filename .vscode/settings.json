@@ -1,0 +1,4 @@
+{
+    "mochaExplorer.files": "scripts/*js",
+    "mochaExplorer.logpanel": true
+}
