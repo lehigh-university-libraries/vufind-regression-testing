@@ -23,7 +23,7 @@ describe('Browser-based tests', function() {
 
       it('Homepage', async function() {
         await driver.get(url_prefix);
-        await expectPageRenders();
+        await expectTheBasics();
         let title = await driver.getTitle();
         expect(title).to.equal("Search Home"); 
       });
@@ -32,7 +32,7 @@ describe('Browser-based tests', function() {
 
         before(async function() {
           await driver.get(url_prefix + '/Record/12345');
-          await expectPageRenders();
+          await expectTheBasics();
         });
 
         it('Has a request link', async function() {
@@ -43,41 +43,52 @@ describe('Browser-based tests', function() {
 
       it('Un-Requestable Material', async function() {
         await driver.get(url_prefix + '/Record/677843');
-        await expectPageRenders();
+        await expectTheBasics();
         let request_links = await driver.findElements(By.css('.holdings-tab .placehold'));
         expect(request_links).to.be.empty;
       });
 
       it('Summary Holdings', async function() {
         await driver.get(url_prefix + '/Record/742590');
-        await expectPageRenders();
+        await expectTheBasics();
         await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
       });
 
       describe('Restricted Journal', function() {
         it('Not Logged In', async function() {
           await driver.get(url_prefix + '/Record/12639');
-          await expectPageRenders();
+          await expectTheBasics();
           await driver.findElement(By.css('.holdings-tab #loginOptions'));
         });
       });
 
       it('Bound-with', async function() {
         await driver.get(url_prefix + '/Record/1092692');
-        await expectPageRenders();
+        await expectTheBasics();
         await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
       });
 
       it('Finding Aid tab', async function() {
         await driver.get(url_prefix + '/Record/10664764');
-        await expectPageRenders();
+        await expectTheBasics();
         await driver.findElement(By.css('.record-tab.findingaid'));
       });
 
     });
   });
 
-  function expectPageRenders() {
+  function expectTheBasics() {
+    return expectPageRenders()
+      .then(expectNoFakeData());
+  }
+
+  async function expectPageRenders() {
     return driver.findElement(By.id('loginOptions'));
   }
+
+  async function expectNoFakeData() {
+    let text = await driver.findElement(By.css('body')).getText();
+    return expect(text).not.to.include("fake");
+  }
+
 });
