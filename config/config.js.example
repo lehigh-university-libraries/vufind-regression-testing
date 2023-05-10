@@ -1,0 +1,6 @@
+const environments = [
+  { name: 'test', url_prefix: 'https://test.vufind.someuniversity.edu' },
+  { name: 'production', url_prefix: 'https://production.vufind.someuniversity.edu' },
+]
+
+module.exports = environments;
