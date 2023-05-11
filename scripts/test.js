@@ -63,7 +63,7 @@ describe('Browser-based tests', function() {
       });
 
       it('Bound-with', async function() {
-        await driver.get(url_prefix + '/Record/1092692');
+        await driver.get(url_prefix + '/Record/1093118');
         await expectTheBasics();
         await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
       });
