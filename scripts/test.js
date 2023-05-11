@@ -31,7 +31,7 @@ describe('Browser-based tests', function() {
 
       describe('Catalog tab', function() {
 
-        describe('Record Pages', function() {
+        describe('Record pages', function() {
 
           describe('Normal print record page', function() {
 
@@ -85,7 +85,7 @@ describe('Browser-based tests', function() {
 
         });
 
-        describe('Search Results Pages', function() {
+        describe('Search Results pages', function() {
 
           describe('Normal search', function() {
 
@@ -110,6 +110,21 @@ describe('Browser-based tests', function() {
         });
 
       });
+
+      describe('Articles tab', function() {
+
+        describe('Search Results pages', function() {
+
+          it('Browzine PDF Full-Text link', async function() {
+            await driver.get(url_prefix + '/EDS/Search?lookfor=Trombones+Elicit+Bitter+More+Strongly+Than+Do+Clarinets');
+            await expectTheBasics();
+            await driver.wait(until.elementLocated(By.linkText('Browzine PDF Full Text')), 2000);
+          });
+
+        });
+
+      });
+
     });
   });
 
