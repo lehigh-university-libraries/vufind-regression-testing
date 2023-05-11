@@ -1,5 +1,6 @@
 var webdriver = require('selenium-webdriver');
 var chrome = require('selenium-webdriver/chrome');
+var until = require('selenium-webdriver/lib/until');
 var expect = require('chai').expect;
 
 const { Builder, By, Key } = require("selenium-webdriver");
@@ -85,6 +86,20 @@ describe('Browser-based tests', function() {
         });
 
         describe('Search Results Pages', function() {
+
+          describe('Normal search', function() {
+
+            before(async function() {
+              await driver.get(url_prefix + '/Search/Results?lookfor=test');
+              await expectTheBasics();
+            });
+
+            it('Suggests article results', async function() {
+              // This anchor is loaded async by JS, so will take a few seconds
+              await driver.wait(until.elementLocated(By.css('#articleSearchResults a')), 5000);
+            });
+    
+          });
 
           it('Title subfields n & p', async function() {
             await driver.get(url_prefix + '/Search/Results?lookfor=asm+handbook');
