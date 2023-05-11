@@ -35,6 +35,10 @@ describe('Browser-based tests', function() {
           await expectTheBasics();
         });
 
+        it('Displays the location', async function() {
+          await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]'));
+        });
+
         it('Has a request link', async function() {
           await driver.findElement(By.css('.holdings-tab .placehold'));
         });
