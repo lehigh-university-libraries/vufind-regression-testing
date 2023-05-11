@@ -79,7 +79,7 @@ describe('Browser-based tests', function() {
 
   function expectTheBasics() {
     return expectPageRenders()
-      .then(expectNoFakeData());
+      .then(() => {return expectNoFakeData()});
   }
 
   async function expectPageRenders() {
