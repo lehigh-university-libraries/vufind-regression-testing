@@ -87,10 +87,15 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('.record-tab.findingaid'));
           });
 
-          it('Browzine View Cpmplete Issue link', async function() {
+          it('Browzine View Complete Issue link', async function() {
             await driver.get(url_prefix + '/Record/79317');
             await expectTheBasics();
-            await driver.findElement(By.linkText('View complete issue of this journal (Browzine)'));
+            let browzine_link = await driver.findElement(By.linkText('View complete issue of this journal (Browzine)'));
+
+            // should not be within a heading
+            let heading_ancestors = await browzine_link.findElements(By.xpath('ancestor::h3'));
+            expect(heading_ancestors).to.be.empty;
+
           });
 
         });
