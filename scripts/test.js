@@ -95,7 +95,6 @@ describe('Browser-based tests', function() {
             // should not be within a heading
             let heading_ancestors = await browzine_link.findElements(By.xpath('ancestor::h3'));
             expect(heading_ancestors).to.be.empty;
-
           });
 
         });
@@ -120,6 +119,17 @@ describe('Browser-based tests', function() {
             await driver.get(url_prefix + '/Search/Results?lookfor=asm+handbook');
             await expectTheBasics();
             await driver.findElement(By.linkText('ASM Handbook.Volume 12, Fractography /'));
+          });
+
+        });
+
+        describe('Author home', function() {
+
+          it('Wikipedia not present', async function() {
+            await driver.get(url_prefix + '/Author/Home?author=Whitman%2C+Walt%2C');
+            await expectTheBasics();
+            let wikipedia_entries = await driver.findElements(By.css('.wikipedia'));
+            expect(wikipedia_entries).to.be.empty;
           });
 
         });
