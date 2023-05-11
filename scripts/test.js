@@ -83,6 +83,12 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('.record-tab.findingaid'));
           });
 
+          it('Browzine View Cpmplete Issue link', async function() {
+            await driver.get(url_prefix + '/Record/79317');
+            await expectTheBasics();
+            await driver.findElement(By.linkText('View complete issue of this journal (Browzine)'));
+          });
+
         });
 
         describe('Search Results pages', function() {
