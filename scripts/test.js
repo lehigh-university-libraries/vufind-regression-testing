@@ -28,56 +28,73 @@ describe('Browser-based tests', function() {
         expect(title).to.equal("Search Home"); 
       });
 
-      describe('Normal print record page', function() {
+      describe('Catalog tab', function() {
 
-        before(async function() {
-          await driver.get(url_prefix + '/Record/12345');
-          await expectTheBasics();
+        describe('Record Pages', function() {
+
+          describe('Normal print record page', function() {
+
+            before(async function() {
+              await driver.get(url_prefix + '/Record/12345');
+              await expectTheBasics();
+            });
+
+            it('Displays the location', async function() {
+              await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]'));
+            });
+
+            it('Has a request link', async function() {
+              await driver.findElement(By.css('.holdings-tab .placehold'));
+            });
+
+          });
+
+          it('Un-Requestable Material', async function() {
+            await driver.get(url_prefix + '/Record/677843');
+            await expectTheBasics();
+            let request_links = await driver.findElements(By.css('.holdings-tab .placehold'));
+            expect(request_links).to.be.empty;
+          });
+
+          it('Summary Holdings', async function() {
+            await driver.get(url_prefix + '/Record/742590');
+            await expectTheBasics();
+            await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
+          });
+
+          describe('Restricted Journal', function() {
+            it('Not Logged In', async function() {
+              await driver.get(url_prefix + '/Record/12639');
+              await expectTheBasics();
+              await driver.findElement(By.css('.holdings-tab #loginOptions'));
+            });
+          });
+
+          it('Bound-with', async function() {
+            await driver.get(url_prefix + '/Record/1093118');
+            await expectTheBasics();
+            await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
+          });
+
+          it('Finding Aid tab', async function() {
+            await driver.get(url_prefix + '/Record/10664764');
+            await expectTheBasics();
+            await driver.findElement(By.css('.record-tab.findingaid'));
+          });
+
         });
 
-        it('Displays the location', async function() {
-          await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]'));
+        describe('Search Results Pages', function() {
+
+          it('Title subfields n & p', async function() {
+            await driver.get(url_prefix + '/Search/Results?lookfor=asm+handbook');
+            await expectTheBasics();
+            await driver.findElement(By.linkText('ASM Handbook.Volume 12, Fractography /'));
+          });
+
         });
 
-        it('Has a request link', async function() {
-          await driver.findElement(By.css('.holdings-tab .placehold'));
-        });
-
       });
-
-      it('Un-Requestable Material', async function() {
-        await driver.get(url_prefix + '/Record/677843');
-        await expectTheBasics();
-        let request_links = await driver.findElements(By.css('.holdings-tab .placehold'));
-        expect(request_links).to.be.empty;
-      });
-
-      it('Summary Holdings', async function() {
-        await driver.get(url_prefix + '/Record/742590');
-        await expectTheBasics();
-        await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
-      });
-
-      describe('Restricted Journal', function() {
-        it('Not Logged In', async function() {
-          await driver.get(url_prefix + '/Record/12639');
-          await expectTheBasics();
-          await driver.findElement(By.css('.holdings-tab #loginOptions'));
-        });
-      });
-
-      it('Bound-with', async function() {
-        await driver.get(url_prefix + '/Record/1093118');
-        await expectTheBasics();
-        await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
-      });
-
-      it('Finding Aid tab', async function() {
-        await driver.get(url_prefix + '/Record/10664764');
-        await expectTheBasics();
-        await driver.findElement(By.css('.record-tab.findingaid'));
-      });
-
     });
   });
 
