@@ -40,6 +40,10 @@ describe('Browser-based tests', function() {
               await expectTheBasics();
             });
 
+            it('Text this link', async function() {
+              await driver.findElement(By.linkText('Text this'));
+            });
+
             it('Displays the location', async function() {
               await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]'));
             });
