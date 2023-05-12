@@ -97,6 +97,12 @@ describe('Browser-based tests', function() {
             expect(heading_ancestors).to.be.empty;
           });
 
+          it('Special Collections request link', async function() {
+            await driver.get(url_prefix + '/Record/10944200');
+            await expectTheBasics();
+            await driver.findElement(By.css('.holdings-tab a[href^="https://lmc-request.lib.lehigh.edu/requestitem/"]'));
+          });
+
         });
 
         describe('Search Results pages', function() {
