@@ -103,6 +103,12 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('.holdings-tab a[href^="https://lmc-request.lib.lehigh.edu/requestitem/"]'));
           });
 
+          it('eBook description', async function() {
+            await driver.get(url_prefix + '/Record/10997217');
+            await expectTheBasics();
+            await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 online resource (463 pages)"]'));
+          });
+
         });
 
         describe('Search Results pages', function() {
