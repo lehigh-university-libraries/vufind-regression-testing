@@ -103,7 +103,7 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('.holdings-tab a[href^="https://lmc-request.lib.lehigh.edu/requestitem/"]'));
           });
 
-          it('eBook description', async function() {
+          it('eBook physical description', async function() {
             await driver.get(url_prefix + '/Record/10997217');
             await expectTheBasics();
             await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 online resource (463 pages)"]'));
@@ -131,6 +131,12 @@ describe('Browser-based tests', function() {
             await driver.get(url_prefix + '/Search/Results?lookfor=asm+handbook');
             await expectTheBasics();
             await driver.findElement(By.linkText('ASM Handbook.Volume 12, Fractography /'));
+          });
+
+          it('Lehigh Author facet', async function() {
+            await driver.get(url_prefix + '/Search/Results?lookfor=Athens+priesthood');
+            await expectTheBasics();
+            await driver.findElement(By.css('#side-panel-lehighAuthor'));
           });
 
         });
