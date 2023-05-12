@@ -152,7 +152,13 @@ describe('Browser-based tests', function() {
 
         });
 
-      });
+        it('Course Reserves home', async function() {
+            await driver.get(url_prefix + '/Search/Reserves');
+            await expectTheBasics();
+            await driver.findElement(By.css('.mainbody table td.instructor'));
+          });
+  
+        });
 
       describe('Articles tab', function() {
 
