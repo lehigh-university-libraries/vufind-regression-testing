@@ -168,6 +168,21 @@ describe('Browser-based tests', function() {
 
       });
 
+      describe ('AlphaBrowse (Catalog) tab', function() {
+
+        it('Title browse', async function() {
+          await driver.get(url_prefix + '/Alphabrowse/Home?source=title&from=test');
+          await expectTheBasics();
+
+          // The basic table appears
+          await driver.findElement(By.css('table.alphabrowse'));
+
+          // One of the rows in the table
+          await driver.findElement(By.linkText('Test and analysis of Web services / Luciano Baresi, Elisabetta di Nitto.'));
+        });
+
+      });
+
     });
   });
 
