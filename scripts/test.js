@@ -71,7 +71,12 @@ describe('Browser-based tests', function() {
             it('Not Logged In', async function() {
               await driver.get(url_prefix + '/Record/12639');
               await expectTheBasics();
+
+              // Login link
               await driver.findElement(By.css('.holdings-tab #loginOptions'));
+
+              // Preview of URL.  This will fail if the Folio.ini note_type is wrong
+              await driver.findElement(By.xpath('//div[@class="tab-content"]//*[text()="https://www.nsba.org/ASBJ"]'));
             });
           });
 
