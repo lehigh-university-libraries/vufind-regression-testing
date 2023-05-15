@@ -87,7 +87,7 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('.record-tab.findingaid'));
           });
 
-          it('Browzine View Complete Issue link', async function() {
+          it('ejournal Browzine View Complete Issue link', async function() {
             await driver.get(url_prefix + '/Record/79317');
             await expectTheBasics();
             let browzine_link = await driver.findElement(By.linkText('View complete issue of this journal (Browzine)'));
@@ -107,6 +107,12 @@ describe('Browser-based tests', function() {
             await driver.get(url_prefix + '/Record/10997217');
             await expectTheBasics();
             await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 online resource (463 pages)"]'));
+          });
+
+          it('Streaming Video physical description', async function() {
+            await driver.get(url_prefix + '/Record/10874924');
+            await expectTheBasics();
+            await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 streaming video file (137 min.)."]'));
           });
 
         });
