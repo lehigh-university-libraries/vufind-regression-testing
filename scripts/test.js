@@ -146,6 +146,15 @@ describe('Browser-based tests', function() {
               await driver.wait(until.elementLocated(By.css('#articleSearchResults a')), 5000);
             });
     
+            describe('Search Box', function() {
+
+              it('Search Type default', async function() {
+                let type = await driver.findElement(By.css('#searchForm_type > option[selected]')).getText();
+                expect(type).to.equal("Catalog - All Fields");
+              });
+
+            });
+  
           });
 
           it('Title subfields n & p', async function() {
