@@ -86,10 +86,20 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
           });
 
-          it('Finding Aid tab', async function() {
-            await driver.get(url_prefix + '/Record/10664764');
-            await expectTheBasics();
-            await driver.findElement(By.css('.record-tab.findingaid'));
+          describe('LMC Special Collections item', function() {
+            before(async function() {
+              await driver.get(url_prefix + '/Record/10664764');
+              await expectTheBasics();
+            });
+
+            it('Finding Aid tab', async function() {
+              await driver.findElement(By.css('.record-tab.findingaid'));
+            });
+
+            it('Display Location Name', async function() {
+              await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//h3[contains(., "Special Collections")]'));
+            });
+
           });
 
           it('ejournal Browzine View Complete Issue link', async function() {
