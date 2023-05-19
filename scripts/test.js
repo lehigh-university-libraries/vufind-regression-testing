@@ -54,6 +54,23 @@ describe('Browser-based tests', function() {
 
           });
 
+          describe('Book with additional record data fields', function() {
+
+            before(async function() {
+              await driver.get(url_prefix + '/Record/256784');
+              await expectTheBasics();
+            });
+
+            it('Notes field', async function() {
+              await driver.findElement(By.xpath('//div[@class="media-body"]//th[contains(text(), "Notes:")]'));
+            });
+
+            it('Description field', async function() {
+              await driver.findElement(By.xpath('//div[@class="media-body"]//th[contains(text(), "Description:")]'));
+            });
+
+          })
+
           it('Un-Requestable Material', async function() {
             await driver.get(url_prefix + '/Record/677843');
             await expectTheBasics();
