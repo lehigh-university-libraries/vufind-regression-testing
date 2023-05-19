@@ -143,7 +143,12 @@ describe('Browser-based tests', function() {
 
             it('Suggests article results', async function() {
               // This anchor is loaded async by JS, so will take a few seconds
+              // Test the suggestion box right above the results
               await driver.wait(until.elementLocated(By.css('#articleSearchResults a')), 5000);
+
+              // Also test the Articles tab itself, it should have a number surrounded by '()'
+              let articleCountElement = await driver.findElement(By.css('#articleCount'));
+              await driver.wait(until.elementTextMatches(articleCountElement, /\d/), 5000);
             });
     
             describe('Search Box', function() {
