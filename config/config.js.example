@@ -3,4 +3,13 @@ const environments = [
   { name: 'production', url_prefix: 'https://production.vufind.someuniversity.edu' },
 ]
 
-module.exports = environments;
+const cookie = {
+  url: 'https://cookies.someuniversity.edu/?setcookie',
+  name: 'selenium-testing',
+  value: '1',
+}
+
+module.exports = { 
+  environments, 
+  cookie,
+};

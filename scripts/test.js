@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 
 const { Builder, By, Key } = require("selenium-webdriver");
 
-const environments = require('../config/config');
+const { environments, cookie } = require('../config/config');
 
 const service = new chrome.ServiceBuilder('chromedriver'); 
 
@@ -17,6 +17,12 @@ const driver = new Builder()
 
 describe('Browser-based tests', function() {
   this.timeout(10000);
+
+  before(async function() {
+    // Access a URL to set any cookies on the browser session.  Used to set a domain cookie
+    // so that GA can classify this traffic as from a bot.
+    await driver.get(cookie.url);
+  });
 
   environments.forEach(({name, url_prefix}) => {
 
@@ -257,11 +263,17 @@ describe('Browser-based tests', function() {
 
   function expectTheBasics() {
     return expectPageRenders()
+      .then(() => {return expectCookieSet()})
       .then(() => {return expectNoFakeData()});
   }
 
   async function expectPageRenders() {
     return driver.findElement(By.id('loginOptions'));
+  }
+
+  async function expectCookieSet() {
+    let found_cookie = await driver.manage().getCookie(cookie.name);
+    return expect(found_cookie.value).to.equal(cookie.value);
   }
 
   async function expectNoFakeData() {
