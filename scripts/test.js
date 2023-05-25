@@ -239,6 +239,11 @@ describe('Browser-based tests', function() {
             await driver.wait(until.elementLocated(By.linkText('Browzine PDF Full Text')), 2000);
           });
 
+          it('No Full Text checkbox', async function() {
+            let fulltext_checkbox = await driver.findElements(By.css('a[data-facet="LIMIT|FT:y"]'));
+            expect(fulltext_checkbox).to.be.empty;
+          });
+
         });
 
       });
