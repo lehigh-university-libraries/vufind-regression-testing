@@ -182,6 +182,15 @@ describe('Browser-based tests', function() {
               });
 
             });
+
+            it('Exclude facet (call number)', async function() {
+              // Result count has no "badge" class
+              let badge_elements = await driver.findElements(By.css("#side-collapse-dewey-hundreds .facet span.badge"));
+              expect(badge_elements).to.be.empty;
+
+              // Result count has a tooltip
+              await driver.findElement(By.css("#side-collapse-dewey-hundreds .facet a[title*='Exclude']"));
+            });
   
           });
 
