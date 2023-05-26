@@ -183,13 +183,24 @@ describe('Browser-based tests', function() {
 
             });
 
-            it('Exclude facet (call number)', async function() {
-              // Result count has no "badge" class
-              let badge_elements = await driver.findElements(By.css("#side-collapse-dewey-hundreds .facet span.badge"));
-              expect(badge_elements).to.be.empty;
+            describe('Facets', function() {
 
-              // Result count has a tooltip
-              await driver.findElement(By.css("#side-collapse-dewey-hundreds .facet a[title*='Exclude']"));
+              it('Side exclude facet (call number)', async function() {
+                let parentSelector = "#side-collapse-dewey-hundreds";
+                await expectNoBadge(parentSelector);
+
+                return await driver.findElement(By.css(parentSelector + " .facet a[title*='Exclude']"));
+              });
+  
+              it('Top facet', async function() {
+                await expectNoBadge(".top-facets-contents");
+              });
+
+              async function expectNoBadge(parentSelector) {
+                let badge_elements = await driver.findElements(By.css(parentSelector + " .facet span.badge"));
+                return expect(badge_elements).to.be.empty;
+              }
+  
             });
   
           });
