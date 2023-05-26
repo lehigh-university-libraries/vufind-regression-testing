@@ -90,7 +90,7 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
           });
 
-          describe('Restricted Journal', function() {
+          describe('Restricted Journal, Hathi Link', function() {
             it('Not Logged In', async function() {
               await driver.get(url_prefix + '/Record/12639');
               await expectTheBasics();
@@ -100,6 +100,11 @@ describe('Browser-based tests', function() {
 
               // Preview of URL.  This will fail if the Folio.ini note_type is wrong
               await driver.findElement(By.xpath('//div[@class="tab-content"]//*[text()="https://www.nsba.org/ASBJ"]'));
+
+              // Hathi link customized without image
+              let hathi_preview = await driver.wait(until.elementLocated(By.css(".record-previews .hathiPreviewDiv"), 5000));
+              let hathi_img = await hathi_preview.findElements(By.css("img"));
+              expect(hathi_img).to.be.empty;
             });
           });
 
