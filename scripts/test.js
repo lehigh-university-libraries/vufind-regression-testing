@@ -194,6 +194,10 @@ describe('Browser-based tests', function() {
   
               it('Top facet', async function() {
                 await expectNoBadge(".top-facets-contents");
+
+                let top_facet = await driver.findElement(By.css(".top-facet-inner"));
+                let border = await top_facet.getCssValue("border-top-width");
+                expect(border).to.equal("0px");
               });
 
               async function expectNoBadge(parentSelector) {
