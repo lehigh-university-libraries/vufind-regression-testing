@@ -264,7 +264,16 @@ describe('Browser-based tests', function() {
         it('Course Reserves home', async function() {
             await driver.get(url_prefix + '/Search/Reserves');
             await expectTheBasics();
-            await driver.findElement(By.css('.mainbody table td.instructor'));
+
+            // The table has data
+            let department_link = await driver.findElement(By.css('.mainbody table td.department a'));
+            let instructor_link = await driver.findElement(By.css('.mainbody table td.instructor a'));
+
+            // The department and instructor links go to a refined search, not a list of records
+            let instructor_href = await instructor_link.getAttribute("href");
+            expect(instructor_href).contains("type=AllFields&filter[]=instructor_str");
+            let department_href = await department_link.getAttribute("href");
+            expect(department_href).contains("type=AllFields&filter[]=department_str");
           });
   
         });
