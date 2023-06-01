@@ -240,6 +240,16 @@ describe('Browser-based tests', function() {
 
         });
 
+        describe('Advanced Search page', function() {
+
+          it('Link to basic search', async function() {
+            await driver.get(url_prefix + '/Search/Advanced');
+            await expectTheBasics();
+            await driver.findElement(By.linkText("Back to Basic Catalog Search"));
+          });
+    
+        });
+
         describe('Author home', function() {
 
           it('Wikipedia not present', async function() {
@@ -285,6 +295,16 @@ describe('Browser-based tests', function() {
             expect(fulltext_checkbox).to.be.empty;
           });
 
+        });
+
+        describe('Advanced Search page', function() {
+
+          it('Link to basic search', async function() {
+            await driver.get(url_prefix + '/EDS/Advanced');
+            await expectTheBasics();
+            await driver.findElement(By.linkText("Back to Basic Article Search"));
+          });
+    
         });
 
       });
