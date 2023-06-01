@@ -1,6 +1,15 @@
+// IDs of state-specific record pages
+const TEST_DATA = {
+  on_order: 't12345',
+}
+
+const PROD_DATA = {
+  on_order: 'p12345',
+}
+
 const environments = [
-  { name: 'test', url_prefix: 'https://test.vufind.someuniversity.edu' },
-  { name: 'production', url_prefix: 'https://production.vufind.someuniversity.edu' },
+  { name: 'test', url_prefix: 'https://test.vufind.someuniversity.edu', records: TEST_DATA },
+  { name: 'production', url_prefix: 'https://production.vufind.someuniversity.edu', records: PROD_DATA },
 ]
 
 const cookie = {

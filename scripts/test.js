@@ -24,7 +24,7 @@ describe('Browser-based tests', function() {
     await driver.get(cookie.url);
   });
 
-  environments.forEach(({name, url_prefix}) => {
+  environments.forEach(({name, url_prefix, records}) => {
 
     describe(name, function() {
 
@@ -156,6 +156,18 @@ describe('Browser-based tests', function() {
             await driver.get(url_prefix + '/Record/10874924');
             await expectTheBasics();
             await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 streaming video file (137 min.)."]'));
+          });
+
+          describe('State-dependent', function() {
+
+            it("Item on order", async function() {
+              await driver.get(url_prefix + '/Record/' + records.on_order);
+              await expectTheBasics();
+              let holdings_tab = await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]'));
+              let text = await holdings_tab.getText();
+              expect(text).to.contain("This item has been ordered.");
+            });
+
           });
 
         });
