@@ -240,6 +240,16 @@ describe('Browser-based tests', function() {
 
         });
 
+        describe('Empty Search Results page', function() {
+
+          it('Custom message', async function() {
+            await driver.get(url_prefix + '/Search/Results?lookfor=asdfasdfasfdasfd');
+            await expectTheBasics();
+            await driver.findElement(By.xpath('//div[contains(@class, "alert")]/p[contains(text(), "PALCI")]'));
+          });
+
+        });
+
         describe('Advanced Search page', function() {
 
           it('Link to basic search', async function() {
@@ -302,6 +312,16 @@ describe('Browser-based tests', function() {
           it('No Full Text checkbox', async function() {
             let fulltext_checkbox = await driver.findElements(By.css('a[data-facet="LIMIT|FT:y"]'));
             expect(fulltext_checkbox).to.be.empty;
+          });
+
+        });
+
+        describe('Empty Search Results page', function() {
+
+          it('Custom message', async function() {
+            await driver.get(url_prefix + '/EDS/Search?lookfor=asdfasdfasfdasfd');
+            await expectTheBasics();
+            await driver.findElement(By.linkText('Google Scholar'));
           });
 
         });
