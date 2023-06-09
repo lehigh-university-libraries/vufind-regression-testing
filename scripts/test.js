@@ -28,11 +28,31 @@ describe('Browser-based tests', function() {
 
     describe(name, function() {
 
-      it('Homepage', async function() {
-        await driver.get(url_prefix);
-        await expectTheBasics();
-        let title = await driver.getTitle();
-        expect(title).to.equal("Search Home"); 
+      describe('Homepage', function() {
+
+        before(async function() {
+          await driver.get(url_prefix);
+          await expectTheBasics();
+        });
+
+        it('Title', async function() {
+          let title = await driver.getTitle();
+          expect(title).to.equal("Search Home"); 
+        });
+  
+        it('Navbar', async function() {
+          let banner = await driver.findElement(By.css('.banner'));
+
+          // Test each top-level item in the navbar
+          await banner.findElement(By.id('libHomePage'));
+          await banner.findElement(By.id('libChat'));
+          await banner.findElement(By.id('feedbackLink'));
+          await banner.findElement(By.id('loginOptions'));
+          await banner.findElement(By.css('.language'));
+          await banner.findElement(By.css('a[href="/Help/Home?topic=advsearch"]')); // Test via as item
+          await banner.findElement(By.linkText('Course Reserves'));
+        });
+  
       });
 
       describe('Catalog tab', function() {
