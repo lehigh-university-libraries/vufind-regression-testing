@@ -374,6 +374,14 @@ describe('Browser-based tests', function() {
 
       });
 
+      describe('Server', function() {
+
+        it('Robots.txt', async function() {
+          await driver.get(url_prefix + '/robots.txt');
+          await driver.findElement(By.xpath('//*[contains(., "User-agent")]'));
+        });
+
+      });
     });
   });
 
