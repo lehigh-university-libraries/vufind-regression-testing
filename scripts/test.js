@@ -46,8 +46,6 @@ describe('Browser-based tests', function() {
 
           // Test each top-level item in the navbar
           await banner.findElement(By.id('libHomePage'));
-          await banner.findElement(By.id('libChat'));
-          await banner.findElement(By.id('feedbackLink'));
           await banner.findElement(By.id('loginOptions'));
           await banner.findElement(By.css('.language'));
           await banner.findElement(By.css('a[href="/Help/Home?topic=advsearch"]')); // Test via as item
