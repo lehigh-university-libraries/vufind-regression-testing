@@ -48,7 +48,7 @@ describe('Browser-based tests', function() {
           await banner.findElement(By.id('libHomePage'));
           await banner.findElement(By.id('loginOptions'));
           await banner.findElement(By.css('.language'));
-          await banner.findElement(By.css('a[href="/Help/Home?topic=advsearch"]')); // Test via as item
+          await banner.findElement(By.css('a[href$="/Help/Home?topic=advsearch"]')); // Test via as item
           await banner.findElement(By.linkText('Course Reserves'));
         });
   
