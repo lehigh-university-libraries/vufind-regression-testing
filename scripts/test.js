@@ -24,7 +24,7 @@ describe('Browser-based tests', function() {
     await driver.get(cookie.url);
   });
 
-  environments.forEach(({name, url_prefix, records}) => {
+  environments.forEach(({name, url_prefix, records, future_version}) => {
 
     describe(name, function() {
 
@@ -106,7 +106,12 @@ describe('Browser-based tests', function() {
           it('Summary Holdings', async function() {
             await driver.get(url_prefix + '/Record/742590');
             await expectTheBasics();
-            await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
+            if (future_version) {
+              await driver.findElement(By.xpath('//h2[text()="Summary Holdings"]'));
+            }
+            else {
+              await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
+            }
           });
 
           describe('Restricted Journal, Hathi Link', function() {
@@ -130,7 +135,12 @@ describe('Browser-based tests', function() {
           it('Bound-with', async function() {
             await driver.get(url_prefix + '/Record/1093118');
             await expectTheBasics();
-            await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
+            if (future_version) {
+              await driver.findElement(By.xpath('//p[text()="The following works are all found in the book indicated by the call number above."]'));
+            }
+            else {
+              await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
+            }
           });
 
           describe('LMC Special Collections item', function() {
@@ -144,7 +154,12 @@ describe('Browser-based tests', function() {
             });
 
             it('Display Location Name', async function() {
-              await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//h3[contains(., "Special Collections")]'));
+              if (future_version) {
+                await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//h2[contains(., "Special Collections")]'));
+              }
+              else {
+                await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//h3[contains(., "Special Collections")]'));
+              }
             });
 
           });
@@ -200,21 +215,28 @@ describe('Browser-based tests', function() {
               await expectTheBasics();
             });
 
-            it('Suggests article results', async function() {
-              // This anchor is loaded async by JS, so will take a few seconds
-              // Test the suggestion box right above the results
-              await driver.wait(until.elementLocated(By.css('#articleSearchResults a')), 5000);
+            if (!future_version) {
+              it('Suggests article results', async function() {
+                // This anchor is loaded async by JS, so will take a few seconds
+                // Test the suggestion box right above the results
+                await driver.wait(until.elementLocated(By.css('#articleSearchResults a')), 5000);
 
-              // Also test the Articles tab itself, it should have a number surrounded by '()'
-              let articleCountElement = await driver.findElement(By.css('#articleCount'));
-              await driver.wait(until.elementTextMatches(articleCountElement, /\d/), 5000);
-            });
+                // Also test the Articles tab itself, it should have a number surrounded by '()'
+                let articleCountElement = await driver.findElement(By.css('#articleCount'));
+                await driver.wait(until.elementTextMatches(articleCountElement, /\d/), 5000);
+              });
+            }
     
             describe('Search Box', function() {
 
               it('Search Type default', async function() {
                 let type = await driver.findElement(By.css('#searchForm_type > option[selected]')).getText();
-                expect(type).to.equal("Catalog - All Fields");
+                if (future_version) {
+                  expect(type).to.equal("All Fields");
+                }
+                else {
+                  expect(type).to.equal("Catalog - All Fields");
+                }
               });
 
             });
