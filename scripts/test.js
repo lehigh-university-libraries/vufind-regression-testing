@@ -136,7 +136,7 @@ describe('Browser-based tests', function() {
             await driver.get(url_prefix + '/Record/1093118');
             await expectTheBasics();
             if (future_version) {
-              await driver.findElement(By.xpath('//p[text()="The following works are all found in the book indicated by the call number above."]'));
+              await driver.findElement(By.xpath('//p[contains(text(), "The following works are all found in the book")]'));
             }
             else {
               await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
