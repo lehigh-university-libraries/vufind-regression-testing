@@ -66,7 +66,12 @@ describe('Browser-based tests', function() {
             });
 
             it('Text this link', async function() {
-              await driver.findElement(By.linkText('Text this'));
+              if (future_version) {
+                await driver.findElement(By.linkText('Text'));
+              }
+              else {
+                await driver.findElement(By.linkText('Text this'));
+              }
             });
 
             it('Displays the location', async function() {
