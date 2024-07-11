@@ -367,21 +367,25 @@ describe('Browser-based tests', function() {
 
         describe('Empty Search Results page', function() {
 
-          it('Custom message', async function() {
-            await driver.get(url_prefix + '/EDS/Search?lookfor=asdfasdfasfdasfd');
-            await expectTheBasics();
-            await driver.findElement(By.linkText('Google Scholar'));
-          });
+          if (!future_version) {
+            it('Custom message', async function() {
+              await driver.get(url_prefix + '/EDS/Search?lookfor=asdfasdfasfdasfd');
+              await expectTheBasics();
+              await driver.findElement(By.linkText('Google Scholar'));
+            });
+          }
 
         });
 
         describe('Advanced Search page', function() {
 
-          it('Link to basic search', async function() {
-            await driver.get(url_prefix + '/EDS/Advanced');
-            await expectTheBasics();
-            await driver.findElement(By.linkText("Back to Basic Article Search"));
-          });
+          if (!future_version) {
+            it('Link to basic search', async function() {
+              await driver.get(url_prefix + '/EDS/Advanced');
+              await expectTheBasics();
+              await driver.findElement(By.linkText("Back to Basic Article Search"));
+            });
+          }
     
         });
 
