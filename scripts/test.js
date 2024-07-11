@@ -288,21 +288,24 @@ describe('Browser-based tests', function() {
 
         describe('Empty Search Results page', function() {
 
-          it('Custom message', async function() {
-            await driver.get(url_prefix + '/Search/Results?lookfor=asdfasdfasfdasfd');
-            await expectTheBasics();
-            await driver.findElement(By.xpath('//div[contains(@class, "alert")]/p[contains(text(), "PALCI")]'));
-          });
-
+          if (!future_version) {
+            it('Custom message', async function() {
+              await driver.get(url_prefix + '/Search/Results?lookfor=asdfasdfasfdasfd');
+              await expectTheBasics();
+              await driver.findElement(By.xpath('//div[contains(@class, "alert")]/p[contains(text(), "PALCI")]'));
+            });
+          }
         });
 
         describe('Advanced Search page', function() {
 
-          it('Link to basic search', async function() {
-            await driver.get(url_prefix + '/Search/Advanced');
-            await expectTheBasics();
-            await driver.findElement(By.linkText("Back to Basic Catalog Search"));
-          });
+          if (!future_version) {
+            it('Link to basic search', async function() {
+              await driver.get(url_prefix + '/Search/Advanced');
+              await expectTheBasics();
+              await driver.findElement(By.linkText("Back to Basic Catalog Search"));
+            });
+          }
     
         });
 
