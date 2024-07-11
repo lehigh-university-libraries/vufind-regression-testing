@@ -109,7 +109,7 @@ describe('Browser-based tests', function() {
           });
 
           it('Summary Holdings', async function() {
-            await driver.get(url_prefix + '/Record/742590');
+            await driver.get(url_prefix + '/Record/23861');
             await expectTheBasics();
             if (future_version) {
               await driver.findElement(By.xpath('//h2[text()="Summary Holdings"]'));
