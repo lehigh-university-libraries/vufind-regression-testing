@@ -187,10 +187,28 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('.holdings-tab a[href^="https://lmc-request.lib.lehigh.edu/requestitem/"]'));
           });
 
-          it('eBook physical description', async function() {
-            await driver.get(url_prefix + '/Record/10997217');
-            await expectTheBasics();
-            await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 online resource (463 pages)"]'));
+          describe('eBoook record page', function() {
+            before(async function() {
+              await driver.get(url_prefix + '/Record/10997217');
+              await expectTheBasics();
+            });
+
+            it('Physical description', async function() {
+              await driver.findElement(By.xpath('//div[@class="media-body"]//td[text()="1 online resource (463 pages)"]'));
+            });
+
+            it('Media box online access', async function() {
+              await driver.findElement(By.css('.record .media a[data-raw-url="https://ebookcentral.proquest.com/lib/lehighlibrary-ebooks/detail.action?docID=5444845"]'));
+              await driver.findElement(By.css('.record .media a[data-platform="Ebook Central"]'));
+              await driver.findElement(By.css('.record .media a[data-platform-subset="Academic Complete"]'));
+            });
+  
+            it('Holdings tag online access', async function() {
+              await driver.findElement(By.css('.holdings-tab a[data-raw-url="https://ebookcentral.proquest.com/lib/lehighlibrary-ebooks/detail.action?docID=5444845"]'));
+              await driver.findElement(By.css('.holdings-tab a[data-platform="Ebook Central"]'));
+              await driver.findElement(By.css('.holdings-tab a[data-platform-subset="Academic Complete"]'));
+            });
+  
           });
 
           it('Streaming Video physical description', async function() {
@@ -286,6 +304,23 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.css('#side-panel-lehighAuthor'));
           });
 
+        });
+
+        describe('Books search', function() {
+          before(async function() {
+            await driver.get(url_prefix + '/Search/Results?hiddenFilters%5B%5D=vufind%3A"books_all"&lookfor=test&type=AllFields');
+            await expectTheBasics();
+          });
+
+          it('Ebook results', async function() {
+            let fulltext_link = await driver.findElement(By.css('#result0 a.fulltext'));
+            let raw_url = await fulltext_link.getAttribute('data-raw-url');
+            expect(raw_url).contains('https://ebookcentral.proquest.com/lib/lehighlibrary-ebooks/detail.action?docID=3035534');
+            let platform = await fulltext_link.getAttribute('data-platform');
+            expect(platform).contains('Ebook Central');
+            let platform_subset = await fulltext_link.getAttribute('data-platform-subset');
+            expect(platform_subset).contains('Academic Complete');
+          });
         });
 
         describe('Empty Search Results page', function() {
