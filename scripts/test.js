@@ -51,7 +51,12 @@ describe('Browser-based tests', function() {
           await banner.findElement(By.css('a[href$="/Help/Home?topic=advsearch"]')); // Test via as item
           await banner.findElement(By.linkText('Course Reserves'));
         });
-  
+
+        it('Google Tag Manager', async function() {
+          let gtmScript = await driver.findElement(By.css('script[src^="https://www.googletagmanager.com/gtm.js"]'));
+          let url = await gtmScript.getAttribute('src');
+          expect(url).to.contain(records.gtm_id);
+        });
       });
 
       describe('Catalog tab', function() {
