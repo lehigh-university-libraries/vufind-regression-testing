@@ -104,6 +104,9 @@ describe('Browser-based tests', function() {
               await driver.findElement(By.xpath('//div[@class="media-body"]//th[contains(text(), "Description:")]'));
             });
 
+            it('Z39.88 OpenUrl field for Zotero', async function() {
+              await driver.findElement(By.css('.Z3988[title*="rft.genre=book"]'));
+            });
           })
 
           it('Un-Requestable Material', async function() {
