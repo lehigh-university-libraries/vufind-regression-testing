@@ -158,12 +158,16 @@ describe('Browser-based tests', function() {
 
           describe('LMC Special Collections item', function() {
             before(async function() {
-              await driver.get(url_prefix + '/Record/10664764');
+              await driver.get(url_prefix + '/Record/10664764#findingaid');
               await expectTheBasics();
             });
 
             it('Finding Aid tab', async function() {
               await driver.findElement(By.css('.record-tab.findingaid'));
+            });
+
+            it('Finding Aid content via AJAX', async function() {
+              await driver.wait(until.elementLocated(By.css('.findingaid-tab h4')), 5000);
             });
 
             it('Display Location Name', async function() {
