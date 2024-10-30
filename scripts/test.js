@@ -304,6 +304,13 @@ describe('Browser-based tests', function() {
   
           });
 
+          it('Stopword-heavy search', async function() {
+            await driver.get(url_prefix + '/Search/Results?lookfor=how+the+word+is+passed');
+            let stats = await driver.findElement(By.css('.search-stats'));
+            let result_count = Number(await stats.getAttribute('data-record-total'));
+            expect(result_count).greaterThan(0);
+          });
+
           it('Title subfields n & p', async function() {
             await driver.get(url_prefix + '/Search/Results?lookfor=asm+handbook');
             await expectTheBasics();
