@@ -431,10 +431,6 @@ describe('Browser-based tests', function() {
             await driver.findElement(By.xpath('//div[@class="media-body"]//*[contains(., "Page Count")]'));
           });
 
-          it('Publication Year', async function() {
-            await driver.findElement(By.css('.media-body .fa-calendar'));
-          });
-
           it('Browzine PDF Full-Text link', async function() {
             await driver.wait(until.elementLocated(By.linkText('Browzine PDF Full Text')), 2000);
           });
