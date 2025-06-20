@@ -165,6 +165,10 @@ describe('Browser-based tests', function () {
               await expectTheBasics();
             });
 
+            it('Description (truncated) at the top linking to full', async function () {
+              await driver.findElement(By.css('.media-body a[href*="Description"]'));
+            });
+
             it('Finding Aid tab', async function () {
               await driver.findElement(By.css('.record-tab.findingaid'));
             });
