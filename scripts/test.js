@@ -252,7 +252,7 @@ describe('Browser-based tests', function () {
 
         describe('Search Results pages', function () {
 
-          describe('Normal search', function () {
+          describe('Solr search', function () {
 
             before(async function () {
               await driver.get(url_prefix + '/Search/Results?lookfor=test');
