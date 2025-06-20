@@ -154,6 +154,9 @@ describe('Browser-based tests', function () {
             else {
               await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
             }
+
+            // Make sure the items are displayed in the correct order
+            await driver.findElement(By.css('.bound-with-records li:nth-child(4).direct-item'));
           });
 
           describe('LMC Special Collections item', function () {
