@@ -80,11 +80,11 @@ describe('Browser-based tests', function () {
             });
 
             it('Displays the location', async function () {
-              await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]'));
+              await driver.wait(until.elementLocated(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]')), 5000);
             });
 
             it('Has a request link', async function () {
-              await driver.findElement(By.css('.holdings-tab .placehold'));
+              await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
             });
 
           });
@@ -120,7 +120,7 @@ describe('Browser-based tests', function () {
             await driver.get(url_prefix + '/Record/1767');
             await expectTheBasics();
             if (future_version) {
-              await driver.findElement(By.xpath('//h2[text()="Summary Holdings"]'));
+              await driver.wait(until.elementLocated(By.xpath('//h2[text()="Summary Holdings"]')), 5000);
             }
             else {
               await driver.findElement(By.xpath('//h3[text()="Summary Holdings"]'));
@@ -133,7 +133,7 @@ describe('Browser-based tests', function () {
               await expectTheBasics();
 
               // Login link
-              await driver.findElement(By.css('.holdings-tab #loginOptions'));
+              await driver.wait(until.elementLocated(By.css('.holdings-tab #loginOptions')), 5000);
 
               // Preview of URL.  This will fail if the Folio.ini note_type is wrong
               await driver.findElement(By.xpath('//div[@class="tab-content"]//*[text()="https://www.nsba.org/ASBJ"]'));
@@ -149,7 +149,7 @@ describe('Browser-based tests', function () {
             await driver.get(url_prefix + '/Record/1093118');
             await expectTheBasics();
             if (future_version) {
-              await driver.findElement(By.xpath('//p[contains(text(), "The following works are all found in the book")]'));
+              await driver.wait(until.elementLocated(By.xpath('//p[contains(text(), "The following works are all found in the book")]')), 5000);
             }
             else {
               await driver.findElement(By.xpath('//h3[text()="This item is bound with: "]'));
@@ -179,7 +179,9 @@ describe('Browser-based tests', function () {
 
             it('Display Location Name', async function () {
               if (future_version) {
-                await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//h2[contains(., "Special Collections")]'));
+                // Load the primary tab before checking holdings info
+                await driver.get(url_prefix + '/Record/10664764');
+                await driver.wait(until.elementLocated(By.xpath('//div[contains(@class, "holdings-tab")]//h2[contains(., "Special Collections")]')), 5000);
               }
               else {
                 await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]//h3[contains(., "Special Collections")]'));
@@ -203,7 +205,7 @@ describe('Browser-based tests', function () {
           it('Special Collections request link', async function () {
             await driver.get(url_prefix + '/Record/10944200');
             await expectTheBasics();
-            await driver.findElement(By.css('.holdings-tab a[href^="https://lmc-request.lib.lehigh.edu/requestitem/"]'));
+            await driver.wait(until.elementLocated(By.css('.holdings-tab a[href^="https://lmc-request.lib.lehigh.edu/requestitem/"]')), 5000);
           });
 
           describe('eBoook record page', function () {
@@ -223,9 +225,9 @@ describe('Browser-based tests', function () {
             });
 
             it('Holdings tag online access', async function () {
-              await driver.findElement(By.css('.holdings-tab a[data-raw-url="https://ebookcentral.proquest.com/lib/lehighlibrary-ebooks/detail.action?docID=5444845"]'));
-              await driver.findElement(By.css('.holdings-tab a[data-platform="Ebook Central"]'));
-              await driver.findElement(By.css('.holdings-tab a[data-platform-subset="Academic Complete"]'));
+              await driver.wait(until.elementLocated(By.css('.holdings-tab a[data-raw-url="https://ebookcentral.proquest.com/lib/lehighlibrary-ebooks/detail.action?docID=5444845"]')), 5000);
+              await driver.wait(until.elementLocated(By.css('.holdings-tab a[data-platform="Ebook Central"]')), 5000);
+              await driver.wait(until.elementLocated(By.css('.holdings-tab a[data-platform-subset="Academic Complete"]')), 500);
             });
 
           });
@@ -241,6 +243,8 @@ describe('Browser-based tests', function () {
             it("Item on order", async function () {
               await driver.get(url_prefix + '/Record/' + records.on_order);
               await expectTheBasics();
+              // wait for header first, so tab contents are loaded
+              await driver.wait(until.elementLocated(By.xpath('//div[contains(@class, "holdings-tab")]/h2')), 5000);
               let holdings_tab = await driver.findElement(By.xpath('//div[contains(@class, "holdings-tab")]'));
               let text = await holdings_tab.getText();
               expect(text).to.contain("This item has been ordered.");
