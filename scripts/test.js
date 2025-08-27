@@ -24,7 +24,7 @@ describe('Browser-based tests', function () {
     await driver.get(cookie.url);
   });
 
-  environments.forEach(({ name, url_prefix, records, future_version }) => {
+  environments.forEach(({ name, url_prefix, records, users, future_version }) => {
 
     describe(name, function () {
 
@@ -490,6 +490,39 @@ describe('Browser-based tests', function () {
 
           // One of the rows in the table
           await driver.findElement(By.linkText('Test and analysis of Web services / Luciano Baresi, Elisabetta di Nitto.'));
+        });
+
+      });
+
+      describe('Login / Logout', function () {
+
+        it('Login', async function () {
+          await driver.get(url_prefix);
+          await expectTheBasics();
+
+          // Click login link
+          let login_link = await driver.findElement(By.css('#loginOptions > a'));
+          await login_link.click();
+          await driver.wait(until.elementLocated(By.xpath('//h2[text()="Login"]')), 5000);
+
+          // Enter credentials
+          let user = users[0];
+          let username_field = await driver.findElement(By.css('form.form-login input[name=username]'));
+          username_field.sendKeys(user.username);
+          let password_field = await driver.findElement(By.css('form.form-login input[name=password]'));
+          password_field.sendKeys(user.password);
+
+          // Click submit button
+          let login_submit_link = await driver.findElement(By.css('form.form-login input[type=submit]'));
+          await login_submit_link.click();
+          await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
+          await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
+        });
+
+        it('Logout', async function () {
+          let logout_link = await driver.findElement(By.css('.logoutOptions > a.logout'));
+          await logout_link.click();
+          await driver.wait(until.elementLocated(By.css('#loginOptions')), 5000);
         });
 
       });
