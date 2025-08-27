@@ -494,7 +494,7 @@ describe('Browser-based tests', function () {
 
       });
 
-      describe('Login / Logout', function () {
+      describe('Login-based tests', function () {
 
         it('Login', async function () {
           await driver.get(url_prefix);
@@ -519,7 +519,22 @@ describe('Browser-based tests', function () {
           await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
         });
 
+        records.by_location.forEach(({library, hrid}) => {
+          it('Delivery location: ' + library, async function() {
+            await driver.get(url_prefix + '/Record/' + hrid);
+
+            await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
+            let request_link = await driver.findElement(By.css('.holdings-tab .placehold'));
+            request_link.click();
+
+            await driver.wait(until.elementLocated(By.xpath('//h2[contains(text(), "Place a Request")]')), 5000);
+            await driver.findElement(
+              By.xpath('//select[@id="pickUpLocation"]/option[1][contains(text(), "' + library + '")]'));
+          });
+        });
+
         it('Logout', async function () {
+          await driver.get(url_prefix);
           let logout_link = await driver.findElement(By.css('.logoutOptions > a.logout'));
           await logout_link.click();
           await driver.wait(until.elementLocated(By.css('#loginOptions')), 5000);
