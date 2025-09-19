@@ -336,32 +336,6 @@ describe('Browser-based tests', function () {
 
         });
 
-        describe('Single Search', function () {
-
-          it('Total records', async function () {
-            await driver.get(url_prefix + '/Combined/Results');
-            await expectTheBasics();
-
-            for (let { name, selector, attribute = 'data-record-total', minExpected, maxExpected } of records.boxes) {
-              let element = await driver.wait(until.elementLocated(By.css(selector), 5000));
-
-              // let element = await driver.findElement(By.css(selector));
-              let count = Number(await element.getAttribute(attribute));
-              expect(count, name).greaterThan(minExpected);
-              expect(count, name).lessThan(maxExpected);
-            }
-          });
-
-          it('Search by OCLC number', async function () {
-            await driver.get(url_prefix + '/Combined/Results?lookfor=1199125571');
-            await expectTheBasics();
-            let books_stats = await driver.wait(until.elementLocated(By.css('#combined_Solr____books .search-stats')), 5000);
-            let books_result_count = Number(await books_stats.getAttribute('data-record-total'));
-            expect(books_result_count).greaterThan(0);
-          });
-
-        });
-
         describe('Books search', function () {
           before(async function () {
             await driver.get(url_prefix + '/Search/Results?hiddenFilters%5B%5D=vufind%3A"books_all"&lookfor=test&type=AllFields');
@@ -503,6 +477,32 @@ describe('Browser-based tests', function () {
             });
           }
 
+        });
+
+      });
+
+      describe('Single Search', function () {
+
+        it('Total records', async function () {
+          await driver.get(url_prefix + '/Combined/Results');
+          await expectTheBasics();
+
+          for (let { name, selector, attribute = 'data-record-total', minExpected, maxExpected } of records.boxes) {
+            let element = await driver.wait(until.elementLocated(By.css(selector), 5000));
+
+            // let element = await driver.findElement(By.css(selector));
+            let count = Number(await element.getAttribute(attribute));
+            expect(count, name).greaterThan(minExpected);
+            expect(count, name).lessThan(maxExpected);
+          }
+        });
+
+        it('Search by OCLC number', async function () {
+          await driver.get(url_prefix + '/Combined/Results?lookfor=1199125571');
+          await expectTheBasics();
+          let books_stats = await driver.wait(until.elementLocated(By.css('#combined_Solr____books .search-stats')), 5000);
+          let books_result_count = Number(await books_stats.getAttribute('data-record-total'));
+          expect(books_result_count).greaterThan(0);
         });
 
       });
