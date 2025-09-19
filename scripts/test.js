@@ -342,12 +342,13 @@ describe('Browser-based tests', function () {
             await driver.get(url_prefix + '/Combined/Results');
             await expectTheBasics();
 
-            for (let { name, selector, attribute = 'data-record-total', minExpected } of records.boxes) {
+            for (let { name, selector, attribute = 'data-record-total', minExpected, maxExpected } of records.boxes) {
               let element = await driver.wait(until.elementLocated(By.css(selector), 5000));
 
               // let element = await driver.findElement(By.css(selector));
               let count = Number(await element.getAttribute(attribute));
               expect(count, name).greaterThan(minExpected);
+              expect(count, name).lessThan(maxExpected);
             }
           });
 
