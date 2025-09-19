@@ -355,7 +355,7 @@ describe('Browser-based tests', function () {
           it('Search by OCLC number', async function () {
             await driver.get(url_prefix + '/Combined/Results?lookfor=1199125571');
             await expectTheBasics();
-            let books_stats = await driver.findElement(By.css('#combined_Solr____books .search-stats'));
+            let books_stats = await driver.wait(until.elementLocated(By.css('#combined_Solr____books .search-stats')), 5000);
             let books_result_count = Number(await books_stats.getAttribute('data-record-total'));
             expect(books_result_count).greaterThan(0);
           });
