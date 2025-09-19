@@ -432,6 +432,33 @@ describe('Browser-based tests', function () {
 
       describe('Articles tab', function () {
 
+        describe('EDS Record pages', function() {
+
+          describe('EBSCO hosted', function() {
+
+            it('With HTML full text', async function () {
+              await driver.get(url_prefix + '/EdsRecord/asn,186210357');
+              await driver.findElement(By.css('.external-links a'));
+            });
+
+            it('With PDF full text', async function () {
+              await driver.get(url_prefix + '/EdsRecord/mdl,EPTOC147525455');
+              await driver.findElement(By.css('.external-links a'));
+            });
+
+          });
+
+          describe('Not EBSCO hosted', function() {
+
+            it('With custom link', async function () {
+              await driver.get(url_prefix + '/EdsRecord/edselp,S0921448804002457');
+              await driver.findElement(By.css('.custom-links a'));
+            });
+
+          });
+
+        });
+
         describe('Search Results pages', function () {
 
           before(async function () {
