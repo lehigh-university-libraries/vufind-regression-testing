@@ -4,6 +4,7 @@ var until = require('selenium-webdriver/lib/until');
 var expect = require('chai').expect;
 
 const { Builder, By, Key } = require("selenium-webdriver");
+const { TimeoutError } = require('selenium-webdriver/lib/error');
 
 const { environments, cookie } = require('../config/config');
 
@@ -12,7 +13,7 @@ const service = new chrome.ServiceBuilder('chromedriver');
 const driver = new Builder()
   .forBrowser('chrome')
   .setChromeService(service)
-  .setChromeOptions(new chrome.Options().addArguments(['--headless', '--no-sandbox']))
+  .setChromeOptions(new chrome.Options().addArguments(['--headless', '--no-sandbox', '--window-size=1920,1080']))
   .build();
 
 describe('Browser-based tests', function () {
@@ -406,33 +407,6 @@ describe('Browser-based tests', function () {
 
       describe('Articles tab', function () {
 
-        describe('EDS Record pages', function() {
-
-          describe('EBSCO hosted', function() {
-
-            it('With HTML full text', async function () {
-              await driver.get(url_prefix + '/EdsRecord/asn,186210357');
-              await driver.findElement(By.css('.external-links a'));
-            });
-
-            it('With PDF full text', async function () {
-              await driver.get(url_prefix + '/EdsRecord/mdl,EPTOC147525455');
-              await driver.findElement(By.css('.external-links a'));
-            });
-
-          });
-
-          describe('Not EBSCO hosted', function() {
-
-            it('With custom link', async function () {
-              await driver.get(url_prefix + '/EdsRecord/edselp,S0921448804002457');
-              await driver.findElement(By.css('.custom-links a'));
-            });
-
-          });
-
-        });
-
         describe('Search Results pages', function () {
 
           before(async function () {
@@ -444,8 +418,16 @@ describe('Browser-based tests', function () {
             await driver.findElement(By.xpath('//div[@class="media-body"]//*[contains(., "Page Count")]'));
           });
 
-          it('Browzine PDF Full-Text link', async function () {
-            await driver.wait(until.elementLocated(By.linkText('Browzine PDF Full Text')), 2000);
+          it('No Browzine browsing link', async function () {
+            try {
+              await driver.wait(until.elementLocated(By.linkText("View Complete Issue (Browzine)")), 5000);
+              // await driver.wait(until.elementLocated(By.linkText("Browse journal issues in BrowZine")), 5000);
+              throw new Error('Test Failed: Unwanted element was found when it should be absent.');
+            } catch (error) {
+              if (!(error instanceof TimeoutError)) {
+                throw error;
+              }                
+            }
           });
 
           it('No Full Text checkbox', async function () {
@@ -454,6 +436,155 @@ describe('Browser-based tests', function () {
           });
 
         });
+
+        describe('Full text links (record and results pages)', function () {
+
+          it('PDF available', async function () {
+            for (const page of [
+              url_prefix + '/EdsRecord/mdl,40753217',
+              url_prefix + '/EDS/Search?lookfor=Deletion+of+target+gene+%28histidine-rich+protein+2%2F3%29+for+Plasmodium+falciparum+rapid+diagnostic+tests+in+Amhara+region%2C+Ethiopia',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks('full-text-file', null, false);
+            };
+          });
+
+          it('PDF available from Science Direct', async function () {
+            for (const page of [
+              url_prefix + '/EdsRecord/psyh,2026-17309-010',
+              url_prefix + '/EDS/Search?lookfor=Stress+and+burnout+in+dogs+involved+in+animal+assisted+interventions%3A+A+survey+of+Italian+handlers%E2%80%99+opinion',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks('full-text-file', null, false);
+            };
+          });
+
+          it('Non-PDF full text available', async function () {
+            for (const page of [
+              url_prefix + '/EdsRecord/edsemr,edsemr.10.1108.00368790310488887',
+              url_prefix + '/EDS/Search?lookfor=An+investigation+on+the+effect+of+dimensional+differences+in+friction+welding+of+AISI+1040+specimens',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks('content-location', null, false);
+            };
+          });
+
+          it('Retration notice', async function () {
+            for (const page of [
+              url_prefix + '/EdsRecord/asn,161960713',
+              url_prefix + '/EDS/Search?lookfor=A+fuzzy+rough+hybrid+decision+making+technique+for+identifying+the+infected+population+of+COVID-19',
+            ]) {
+              await driver.get(page);
+              // EDS only provides a full text link type 'other'.  Is that worth a fallback?
+              await testFullTextLinks(null, 'Retraction', false);
+            };
+          });
+
+          it('Expression of concern', async function () {
+            for (const page of [
+              url_prefix + '/EdsRecord/asn,85125644',
+              url_prefix + '/EDS/Search?filter%5B%5D=EXPAND%3A%22relatedsubjects%22&filter%5B%5D=LIMIT%7CFT1%3A%22y%22&dfApplied=1&lookfor=Targeted+Disruption+of+Inducible+Nitric+Oxide+Synthase+Protects+Against+Aging%2C+S-Nitrosation%2C+and+Insulin+Resistance+in+Muscle+of+Male+Mice.&type=AllFields&daterange%5B%5D=PublicationDate&PublicationDatefrom=2013&PublicationDateto=2013',
+            ]) {
+              await driver.get(page);
+              // EDS only provides a full text link type 'other'.  Is that worth a fallback?
+              await testFullTextLinks(null, 'Concern', false);
+            };
+          });
+
+          it('Libkey doesn\'t have the record, falls back to "smart link"', async function () {
+            this.timeout(20000);
+            for (const page of [
+              url_prefix + '/EdsRecord/asn,182810252',
+              url_prefix + '/EDS/Search?filter%5B%5D=EXPAND%3A%22relatedsubjects%22&filter%5B%5D=LIMIT%7CFT1%3A%22y%22&dfApplied=1&lookfor=Effect+of+Dimensional+Differences+on+Tensile+Strength+in+Tensile+Test+Specimens&type=TI',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks(null, null, true);
+            };
+          });
+
+          it('No DOI', async function () {
+            this.timeout(20000);
+            for (const page of [
+              url_prefix + '/EdsRecord/asn,187714598',
+              url_prefix + '/EDS/Search?lookfor=Prejudgment+Interest%3A+Is+the+Time+Value+of+Money+Overlooked+in+Divorce+Proceedings',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks(null, null, true);
+            };
+          });
+
+          it('No ISSN - newspaper article in EBSCO DB (smart link)', async function () {
+            this.timeout(20000);
+            for (const page of [
+              url_prefix + '/EdsRecord/bth,188824052',
+              url_prefix + '/EDS/Search?lookfor=Tripura+govt+implemented+several+steps+to+improve+power+transmission+system%3A+Minister',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks(null, null, true);
+            };
+          });
+
+          it('No ISSN - newspaper article in non-EBSCO DB (custom link)', async function () {
+            this.timeout(20000);
+            for (const page of [
+              url_prefix + '/EdsRecord/edsnbk,12BB4ACC815E0D48',
+              url_prefix + '/EDS/Search?lookfor=Stress+testing+begins+on+Bay+Bridge',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks(null, null, true);
+            };
+          });
+
+          it('ISBN', async function () {
+            this.timeout(20000);
+            for (const page of [
+              url_prefix + '/EdsRecord/eric,ED674523',
+              url_prefix + '/EDS/Search?lookfor=Proceedings+of+the+International+Association+for+Development+of+the+Information+Society+%28IADIS%29+International+Conferences+on+Mobile+Learning+%28ML+2025%2C+21st%29+and+Educational+Technologies+%28ICEduTech+2025%2C+10th%29+%28Madeira+Island%2C+Portugal%2C+March+1-3%2C+2025',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks(null, null, true);
+            };
+          });
+
+          it('P link only -- EDS database with HTML full text', async function () {
+            this.timeout(20000);
+            for (const page of [
+              url_prefix + '/EdsRecord/asn,189409190',
+              url_prefix + '/EDS/Search?lookfor=The+Tragic+True+Story+Behind+%27The+Carman+Family+Deaths',
+            ]) {
+              await driver.get(page);
+              await testFullTextLinks(null, null, true);
+            };
+          });
+
+          async function testFullTextLinks(doiLinkSubstring, doiTextSubstring, expectEdsLink) {
+            if (doiLinkSubstring) {
+              await driver.wait(until.elementLocated(By.css('.doiLink > a[href*="' + doiLinkSubstring + '"')), 5000);
+            }
+            else if (doiTextSubstring) {
+              await driver.wait(until.elementLocated(By.xpath('//span[@class="doiLink"]/a/span[contains(., "' + doiTextSubstring + '")]')), 5000);
+            }
+            else {
+              try {
+                await driver.wait(until.elementLocated(By.css('.doiLink > a')), 5000);
+                throw new Error('Test Failed: Unwanted element was found when it should be absent.');
+              } catch (error) {
+                if (!(error instanceof TimeoutError)) {
+                  throw error;
+                }
+              }
+            }
+
+            if (expectEdsLink) {
+              let edsLinkDisplayed = await driver.findElement(By.css('.eds-link')).isDisplayed();
+              expect(edsLinkDisplayed).to.be.true;
+            }
+
+            await driver.findElement(By.css('.openUrlControls > a'));
+          }
+
+        });
+
 
         describe('Empty Search Results page', function () {
 
@@ -476,6 +607,31 @@ describe('Browser-based tests', function () {
               await driver.findElement(By.linkText("Back to Basic Article Search"));
             });
           }
+
+        });
+
+      });
+
+      describe('Journals tab', function () {
+
+        describe('EPF Record pages', function () {
+
+          it('BrowZine browse journal link', async function () {
+            await driver.get(url_prefix + '/EPFRecord/edp19960608');
+            await expectTheBasics();
+            await driver.findElement(By.linkText("Browse Recent Issues"));
+          });
+
+        });
+
+        describe('Search Results pages', function () {
+
+          it('BrowZine browse journal link', async function () {
+            await driver.get(url_prefix + '/Blender/Results?lookfor=chemistry');
+            await expectTheBasics();
+            let record1 = await driver.findElement(By.id('result0'));
+            await record1.findElement(By.linkText("Browse Recent Issues"));
+          });
 
         });
 
