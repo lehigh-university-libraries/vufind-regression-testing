@@ -324,7 +324,7 @@ describe('Browser-based tests', function () {
           });
 
           it('Title subfields n & p', async function () {
-            await driver.get(url_prefix + '/Search/Results?lookfor=asm+handbook');
+            await driver.get(url_prefix + '/Search/Results?lookfor=fractography+handbook');
             await expectTheBasics();
             await driver.findElement(By.linkText('ASM Handbook.Volume 12, Fractography /'));
           });
@@ -388,19 +388,30 @@ describe('Browser-based tests', function () {
 
         });
 
-        it('Course Reserves home', async function () {
-          await driver.get(url_prefix + '/Search/Reserves');
-          await expectTheBasics();
+        describe('Course Reserves', function () {
 
-          // The table has data
-          let department_link = await driver.findElement(By.css('.mainbody table td.department a'));
-          let instructor_link = await driver.findElement(By.css('.mainbody table td.instructor a'));
+          it('CR home', async function () {
+            await driver.get(url_prefix + '/Search/Reserves');
+            await expectTheBasics();
 
-          // The department and instructor links go to a refined search, not a list of records
-          let instructor_href = await instructor_link.getAttribute("href");
-          expect(instructor_href).contains("type=AllFields&filter[]=instructor_str");
-          let department_href = await department_link.getAttribute("href");
-          expect(department_href).contains("type=AllFields&filter[]=department_str");
+            // The table has data
+            let department_link = await driver.findElement(By.css('.mainbody table td.department a'));
+            let instructor_link = await driver.findElement(By.css('.mainbody table td.instructor a'));
+
+            // The department and instructor links go to a refined search, not a list of records
+            let instructor_href = await instructor_link.getAttribute("href");
+            expect(instructor_href).contains("type=AllFields&filter[]=instructor_str");
+            let department_href = await department_link.getAttribute("href");
+            expect(department_href).contains("type=AllFields&filter[]=department_str");
+          });
+
+          it('Current course', async function () {
+            await driver.get(url_prefix + '/Search/Reserves?lookfor=history');
+            await expectTheBasics();
+
+            await driver.findElement(By.xpath('//td[@class="course"]/a[contains(., "HIST 403")]'));
+          });
+
         });
 
       });
