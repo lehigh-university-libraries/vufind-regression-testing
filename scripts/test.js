@@ -324,9 +324,9 @@ describe('Browser-based tests', function () {
           });
 
           it('Title subfields n & p', async function () {
-            await driver.get(url_prefix + '/Search/Results?lookfor=fractography+handbook');
+            await driver.get(url_prefix + '/Search/Results?lookfor=Pennsylvania+Housing+characteristics+for+states,+cities,+and+counties');
             await expectTheBasics();
-            await driver.findElement(By.linkText('ASM Handbook.Volume 12, Fractography /'));
+            await driver.findElement(By.linkText('1970 census of housing.Volume 1, Housing characteristics for states, cities, and counties. Part 40, Pennsylvania.'));
           });
 
           it('Lehigh Author facet', async function () {
