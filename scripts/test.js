@@ -110,13 +110,6 @@ describe('Browser-based tests', function () {
             });
           })
 
-          it('Un-Requestable Material', async function () {
-            await driver.get(url_prefix + '/Record/677843');
-            await expectTheBasics();
-            let request_links = await driver.findElements(By.css('.holdings-tab .placehold'));
-            expect(request_links).to.be.empty;
-          });
-
           it('Summary Holdings', async function () {
             await driver.get(url_prefix + '/Record/1767');
             await expectTheBasics();
@@ -253,7 +246,34 @@ describe('Browser-based tests', function () {
 
           });
 
-        });
+           describe ('Request links', function () {
+
+            it('Un-requestable Material', async function () {
+              await driver.get(url_prefix + '/Record/677843');
+              await expectTheBasics();
+              let request_links = await driver.findElements(By.css('.holdings-tab .placehold'));
+              expect(request_links).to.be.empty;
+            });
+
+            if (records.inactive_location) {
+              it('Un-requestable by inactive location', async function() {
+                await driver.get(url_prefix + '/Record/' + records.inactive_location);
+                await driver.wait(until.elementLocated(By.xpath('//tr[@class="holding-row"]//td//span[contains(text(), "Temporarily Unavailable")]')), 5000);
+
+                try {
+                  await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
+                  throw new Error('Test Failed: Unwanted element was found when it should be absent.');
+                } catch (error) {
+                  if (!(error instanceof TimeoutError)) {
+                    throw error;
+                  }
+                }
+              });
+            }
+
+          });
+
+       });
 
         describe('Search Results pages', function () {
 
