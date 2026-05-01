@@ -84,8 +84,15 @@ describe('Browser-based tests', function () {
               await driver.wait(until.elementLocated(By.xpath('//div[contains(@class, "holdings-tab")]//*[contains(text(), "Linderman Ground Floor - Upper Level")]')), 5000);
             });
 
-            it('Has a request link', async function () {
-              await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
+            it('Has no request link (not logged in)', async function () {
+              try {
+                await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
+                throw new Error('Test Failed: Unwanted element was found when it should be absent.');
+              } catch (error) {
+                if (!(error instanceof TimeoutError)) {
+                  throw error;
+                }
+              }
             });
 
           });
@@ -246,34 +253,101 @@ describe('Browser-based tests', function () {
 
           });
 
-           describe ('Request links', function () {
+          describe('Login-based tests', function () {
 
-            it('Un-requestable Material', async function () {
-              await driver.get(url_prefix + '/Record/677843');
-              await expectTheBasics();
-              let request_links = await driver.findElements(By.css('.holdings-tab .placehold'));
-              expect(request_links).to.be.empty;
+            describe('1. Login', function () {
+              it('Login', async function () {
+                await driver.get(url_prefix);
+                await expectTheBasics();
+
+                // Click login link
+                let login_link = await driver.findElement(By.css('#loginOptions > a'));
+                await login_link.click();
+                await driver.wait(until.elementLocated(By.xpath('//h2[text()="Login"]')), 5000);
+
+                // Enter credentials
+                let user = users[0];
+                let username_field = await driver.findElement(By.css('form.form-login input[name=username]'));
+                username_field.sendKeys(user.username);
+                let password_field = await driver.findElement(By.css('form.form-login input[name=password]'));
+                password_field.sendKeys(user.password);
+
+                // Click submit button
+                let login_submit_link = await driver.findElement(By.css('form.form-login input[type=submit]'));
+                await login_submit_link.click();
+                await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
+                await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
+              });
             });
 
-            if (records.inactive_location) {
-              it('Un-requestable by inactive location', async function() {
-                await driver.get(url_prefix + '/Record/' + records.inactive_location);
-                await driver.wait(until.elementLocated(By.xpath('//tr[@class="holding-row"]//td//span[contains(text(), "Temporarily Unavailable")]')), 5000);
+            describe('2. Request links', function () {
 
-                try {
-                  await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
-                  throw new Error('Test Failed: Unwanted element was found when it should be absent.');
-                } catch (error) {
-                  if (!(error instanceof TimeoutError)) {
-                    throw error;
-                  }
-                }
+              it('Normal item', async function() {
+                await driver.get(url_prefix + '/Record/12345');
+                await driver.findElements(By.css('.holdings-tab .placehold'));
+
               });
-            }
+
+              it('Un-requestable Material', async function () {
+                // Still logged in?
+                await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
+                await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
+
+
+                await driver.get(url_prefix + '/Record/677843');
+                await driver.wait(until.elementLocated(By.css('.holdings-tab .holding-row')), 5000);
+                await driver.wait(async () => {
+                  let links = await driver.findElements(By.css('.holdings-tab .placehold'));
+                  return links.length === 0;
+                }, 5000, 'Expected .placehold links to be removed after AJAX check');
+              });
+
+              if (records.inactive_location) {
+                it('Un-requestable by inactive location', async function() {
+                  await driver.get(url_prefix + '/Record/' + records.inactive_location);
+                  await driver.wait(until.elementLocated(By.xpath('//tr[@class="holding-row"]//td//span[contains(text(), "Temporarily Unavailable")]')), 5000);
+
+                  await driver.wait(async () => {
+                    let links = await driver.findElements(By.css('.holdings-tab .placehold'));
+                    return links.length === 0;
+                  }, 5000, 'Expected .placehold links to be removed after AJAX check');
+                });
+              }
+
+            });
+
+            describe('3. Delivery locations', function () {
+              records.by_location.forEach(({library, hrid}) => {
+                it('Delivery location: ' + library, async function() {
+                  await driver.get(url_prefix + '/Record/' + hrid);
+
+                  // Still logged in?
+                  await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
+                  await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
+
+                  await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
+                  let request_link = await driver.findElement(By.css('.holdings-tab .placehold'));
+                  request_link.click();
+
+                  await driver.wait(until.elementLocated(By.xpath('//h2[contains(text(), "Place a Request")]')), 5000);
+                  await driver.findElement(
+                    By.xpath('//select[@id="pickUpLocation"]/option[1][contains(text(), "' + library + '")]'));
+                });
+              });
+            });
+
+            describe('4. Logout', function () {
+              it('Logout', async function () {
+                await driver.get(url_prefix);
+                let logout_link = await driver.findElement(By.css('.logoutOptions > a.logout'));
+                await logout_link.click();
+                await driver.wait(until.elementLocated(By.css('#loginOptions')), 5000);
+              });
+            });
 
           });
 
-       });
+        });
 
         describe('Search Results pages', function () {
 
@@ -705,54 +779,6 @@ describe('Browser-based tests', function () {
 
           // One of the rows in the table
           await driver.findElement(By.linkText('Test and analysis of Web services / Luciano Baresi, Elisabetta di Nitto.'));
-        });
-
-      });
-
-      describe('Login-based tests', function () {
-
-        it('Login', async function () {
-          await driver.get(url_prefix);
-          await expectTheBasics();
-
-          // Click login link
-          let login_link = await driver.findElement(By.css('#loginOptions > a'));
-          await login_link.click();
-          await driver.wait(until.elementLocated(By.xpath('//h2[text()="Login"]')), 5000);
-
-          // Enter credentials
-          let user = users[0];
-          let username_field = await driver.findElement(By.css('form.form-login input[name=username]'));
-          username_field.sendKeys(user.username);
-          let password_field = await driver.findElement(By.css('form.form-login input[name=password]'));
-          password_field.sendKeys(user.password);
-
-          // Click submit button
-          let login_submit_link = await driver.findElement(By.css('form.form-login input[type=submit]'));
-          await login_submit_link.click();
-          await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
-          await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
-        });
-
-        records.by_location.forEach(({library, hrid}) => {
-          it('Delivery location: ' + library, async function() {
-            await driver.get(url_prefix + '/Record/' + hrid);
-
-            await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
-            let request_link = await driver.findElement(By.css('.holdings-tab .placehold'));
-            request_link.click();
-
-            await driver.wait(until.elementLocated(By.xpath('//h2[contains(text(), "Place a Request")]')), 5000);
-            await driver.findElement(
-              By.xpath('//select[@id="pickUpLocation"]/option[1][contains(text(), "' + library + '")]'));
-          });
-        });
-
-        it('Logout', async function () {
-          await driver.get(url_prefix);
-          let logout_link = await driver.findElement(By.css('.logoutOptions > a.logout'));
-          await logout_link.click();
-          await driver.wait(until.elementLocated(By.css('#loginOptions')), 5000);
         });
 
       });
