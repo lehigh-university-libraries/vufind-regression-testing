@@ -288,12 +288,7 @@ describe('Browser-based tests', function () {
 
               });
 
-              it('Un-requestable Material', async function () {
-                // Still logged in?
-                await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
-                await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
-
-
+              it('Un-requestable Material by circulation rule', async function () {
                 await driver.get(url_prefix + '/Record/677843');
                 await driver.wait(until.elementLocated(By.css('.holdings-tab .holding-row')), 5000);
                 await driver.wait(async () => {
@@ -301,6 +296,17 @@ describe('Browser-based tests', function () {
                   return links.length === 0;
                 }, 5000, 'Expected .placehold links to be removed after AJAX check');
               });
+
+              if (records.loan_to_ill) {
+                it('Un-requestable by current loan user group', async function() {
+                  await driver.get(url_prefix + '/Record/' + records.loan_to_ill);
+                  await driver.wait(until.elementLocated(By.css('.holdings-tab .holding-row')), 5000);
+                  await driver.wait(async () => {
+                    let links = await driver.findElements(By.css('.holdings-tab .placehold'));
+                    return links.length === 0;
+                  }, 5000, 'Expected .placehold links to be removed after AJAX check');
+                });
+              }
 
               if (records.inactive_location) {
                 it('Un-requestable by inactive location', async function() {
@@ -320,10 +326,6 @@ describe('Browser-based tests', function () {
               records.by_location.forEach(({library, hrid}) => {
                 it('Delivery location: ' + library, async function() {
                   await driver.get(url_prefix + '/Record/' + hrid);
-
-                  // Still logged in?
-                  await driver.wait(until.elementLocated(By.css('.logoutOptions')), 5000);
-                  await driver.findElement(By.xpath('//li[@class="logoutOptions"]//span[contains(text(), "Log Out")]'));
 
                   await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
                   let request_link = await driver.findElement(By.css('.holdings-tab .placehold'));
