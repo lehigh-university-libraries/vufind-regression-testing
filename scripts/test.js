@@ -131,7 +131,7 @@ describe('Browser-based tests', function () {
               await expectTheBasics();
 
               // Login link
-              await driver.wait(until.elementLocated(By.css('.holdings-tab #loginOptions')), 5000);
+              await driver.wait(until.elementLocated(By.css('.holdings-tab #hold-login')), 5000);
 
               // Preview of URL.  This will fail if the Folio.ini note_type is wrong
               await driver.findElement(By.xpath('//div[@class="tab-content"]//*[text()="https://www.nsba.org/ASBJ"]'));
