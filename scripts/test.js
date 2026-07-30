@@ -85,14 +85,11 @@ describe('Browser-based tests', function () {
             });
 
             it('Has no request link (not logged in)', async function () {
-              try {
-                await driver.wait(until.elementLocated(By.css('.holdings-tab .placehold')), 5000);
-                throw new Error('Test Failed: Unwanted element was found when it should be absent.');
-              } catch (error) {
-                if (!(error instanceof TimeoutError)) {
-                  throw error;
-                }
-              }
+                await driver.wait(until.elementLocated(By.css('.holdings-tab .holding-row')), 5000);
+                await driver.wait(async () => {
+                  let links = await driver.findElements(By.css('.holdings-tab .placehold'));
+                  return links.length === 0;
+                }, 5000, 'Expected .placehold links to be removed after AJAX check');
             });
 
           });
