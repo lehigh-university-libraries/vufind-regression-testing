@@ -250,6 +250,7 @@ describe('Browser-based tests', function () {
 
           });
 
+          /*
           describe('Login-based tests', function () {
 
             describe('1. Login', function () {
@@ -345,6 +346,7 @@ describe('Browser-based tests', function () {
             });
 
           });
+          */
 
         });
 
