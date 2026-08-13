@@ -663,16 +663,16 @@ describe('Browser-based tests', function () {
             };
           });
 
-          async function testFullTextLinks(doiLinkSubstring, doiTextSubstring, expectEdsLink) {
-            if (doiLinkSubstring) {
-              await driver.wait(until.elementLocated(By.css('.doiLink > a[href*="' + doiLinkSubstring + '"')), 5000);
+          async function testFullTextLinks(identifierLinkSubstring, identifierTextSubstring, expectEdsLink) {
+            if (identifierLinkSubstring) {
+              await driver.wait(until.elementLocated(By.css('.identifierLink > a[href*="' + identifierLinkSubstring + '"]')), 5000);
             }
-            else if (doiTextSubstring) {
-              await driver.wait(until.elementLocated(By.xpath('//span[@class="doiLink"]/a/span[contains(., "' + doiTextSubstring + '")]')), 5000);
+            else if (identifierTextSubstring) {
+              await driver.wait(until.elementLocated(By.xpath('//span[@class="identifierLink"]/a/span[contains(., "' + identifierTextSubstring + '")]')), 5000);
             }
             else {
               try {
-                await driver.wait(until.elementLocated(By.css('.doiLink > a')), 5000);
+                await driver.wait(until.elementLocated(By.css('.identifierLink > a')), 5000);
                 throw new Error('Test Failed: Unwanted element was found when it should be absent.');
               } catch (error) {
                 if (!(error instanceof TimeoutError)) {
