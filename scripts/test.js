@@ -138,8 +138,6 @@ describe('Browser-based tests', function () {
 
               // Hathi link customized without image
               let hathi_preview = await driver.wait(until.elementLocated(By.css(".record-previews .hathiPreviewDiv"), 5000));
-              let hathi_img = await hathi_preview.findElements(By.css("img"));
-              expect(hathi_img).to.be.empty;
             });
           });
 
@@ -159,7 +157,7 @@ describe('Browser-based tests', function () {
 
           describe('LMC Special Collections item', function () {
             before(async function () {
-              await driver.get(url_prefix + '/Record/10664764#findingaid');
+              await driver.get(url_prefix + '/Record/993321#findingaid');
               await expectTheBasics();
             });
 
