@@ -447,6 +447,38 @@ describe('Browser-based tests', function () {
           });
         });
 
+        describe('Board games search', function () {
+          before(async function () {
+            await driver.get(url_prefix + '/Search/Results?hiddenFilters%5B%5D=%23%3A"-%28format%3A"Print+Book"%29+AND+-%28format%3AeBook%29+AND+-%28format%3A"Streaming+Audio"%29+AND+-%28format%3AJournal%29+AND+-%28format%3ANewspaper%29+AND+-%28format%3ASerial%29+AND+-%28format%3ADVD%29+AND+-%28format%3A"Blu-ray+Disc"%29+AND+-%28format%3AVHS%29+AND+-%28format%3AFilmstrip%29+AND+-%28format%3A"Streaming+Video"%29+AND+-%28specialCollections%3A"Special+Collections"%29+AND+-%28govInfo%3A"Government+Information"%29"&lookfor=board+game+collection&type=AllFields');
+            await expectTheBasics();
+          });
+
+          it('Cover images present', async function () {
+            await driver.wait(until.elementLocated(By.css('.result .media-left img')), 5000);
+
+            // Wait for all cover images to finish loading so naturalWidth/naturalHeight are accurate
+            await driver.wait(async () => {
+              return await driver.executeScript(function () {
+                let images = document.querySelectorAll('.result .media-left img');
+                return images.length > 0 && Array.from(images).every(img => img.complete);
+              });
+            }, 5000, 'Expected cover images to finish loading');
+
+            let placeholderImages = await driver.executeScript(function () {
+              let images = document.querySelectorAll('.result .media-left img');
+              let placeholders = [];
+              images.forEach(function (img) {
+                if (img.naturalWidth === 59 && img.naturalHeight === 75) {
+                  placeholders.push(img.currentSrc || img.src);
+                }
+              });
+              return placeholders;
+            });
+
+            expect(placeholderImages, 'Found "no image available" placeholder(s): ' + placeholderImages.join(', ')).to.be.empty;
+          });
+        });
+
         describe('Empty Search Results page', function () {
 
           if (!future_version) {
